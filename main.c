@@ -5,23 +5,23 @@
 #include <time.h>
 
 #include "macros.h"
-#include "serial.h"
-#include "socket.h"
-#include "joystick.h"
-#include "control.h"
-#include "roboteq.h"
-#include "nmeap.h"
-#include "gps.h"
-#include "bufferCombined.h"
-#include "sick.h"
-#include "landmarks.h"
-#include "objects.h"
-#include "location.h"
-#include "visualizer.h"
+#include "serial.h"// standards for serial communication
+#include "socket.h"//standards for ethernet communication
+#include "joystick.h"// for joystick communication
+#include "control.h"//?
+#include "roboteq.h"// for sending commands to motor controller
+#include "nmeap.h"// standards for GPS communcation
+#include "gps.h"// decrypting gps stuff?
+#include "bufferCombined.h"//?
+#include "sick.h"// getting data from LIDAR
+#include "landmarks.h"//??
+#include "objects.h"//? what the lidar sees?
+#include "location.h"// using encoders?
+#include "visualizer.h"//
 #include "vision_nav.h"
 
 //#define FLAG_TESTING
-//#define USE_NORTH
+//#define USE_NORTH// define this if using go north direction, otherwise comment out.
 
 #define QUALIFYP1LAT  42.678162883
 #define QUALIFYP1LON -83.195474886
@@ -42,14 +42,14 @@
 #define BASIC2LAT  42.67888636
 #define BASIC2LON -83.19504497
 
-#define LATGIRTH  29428755.56476586
+#define LATGIRTH  29428755.56476586 //girth? solving for radius of earth at the longitute point?
 #define LONGIRTH  40030230.14070887
 
 #define BASIC3LAT  ((BASIC1LAT+BASIC2LAT)/2)
-#define BASIC3LON  ((BASIC1LON+BASIC2LON)/2 - 8/LATGIRTH*360)
-#define BASIC4LAT  (BASIC1LAT + 2/LONGIRTH*360)
+#define BASIC3LON  ((BASIC1LON+BASIC2LON)/2 - 8/LATGIRTH*360)//?
+#define BASIC4LAT  (BASIC1LAT + 2/LONGIRTH*360)//?
 #define BASIC4LON  BASIC1LON
-#define BASIC5LAT  (BASIC2LAT - 2/LONGIRTH*360)
+#define BASIC5LAT  (BASIC2LAT - 2/LONGIRTH*360)//?
 #define BASIC5LON  BASIC2LON
 
 #define ADVANCED1LAT  42.67931643
@@ -78,18 +78,18 @@
 #define ADVANCED12LAT  ((ADVANCED2LAT + ADVANCED3LAT)/2)
 #define ADVANCED12LON  (ADVANCED4LON - 5/LATGIRTH*360)
 
-#define TESTLAT 42.678482
-#define TESTLON -83.194895
+#define TESTLAT 42.678482//?
+#define TESTLON -83.194895//?
 
 #define TARGET_LIMIT 120
 
 
 
-#define LANEQUALIFICATION 0
-#define FIELDQUALIFICATION 1
+#define LANEQUALIFICATION 0//?
+#define FIELDQUALIFICATION 1//?
 
 /*SENSOR OPTIONS*/
-#define USE_VISION
+#define USE_VISION//??
 //#define USE_LIDAR
 //#define USE_GPS
 //#define USE_COMBINED_BUFFER
@@ -98,15 +98,15 @@
 /*CONTROL OPTIONS*/
 //#define REVFRAMES 25
 #define REVFRAMES 2,0
-#define SWAPTIME 20.0 //in seconds
+#define SWAPTIME 20.0 //in seconds// swap for points if you are stuck on the fences
 //#define AUTO_SWAP
 
-#define OPEN_FIELD_INDEX 0
-#define END_LANE_INDEX 1
+#define OPEN_FIELD_INDEX 0//ordering the points
+#define END_LANE_INDEX 1//?
 
-#define MAPDELAY 10
-#define CLEARMAPDELAY 5
-#define DUMPGPSDELAY 20
+#define MAPDELAY 10//-
+#define CLEARMAPDELAY 5//-
+#define DUMPGPSDELAY 20//
 /*DEBUG OPTIONS*/
 //#define DUMP_GPS
 //#define DEBUG_TARGET
@@ -114,7 +114,7 @@
 //#define DEBUG_GPS
 //#define DEBUG_LIDAR
 //#define DEBUG_VISUALIZER
-#define DEBUG_BUFFER
+#define DEBUG_BUFFER//?
 #define DEBUG_MAIN
 
 /*joystick.h Definitions*/
@@ -124,31 +124,32 @@ struct JoystickData joy0;
 //int roboteqPort = 12;
 int roboteqPort = 7;
 
-/*control.h Definitions*/
+/*control.h Definitions*/ // what does control.h do?
 CVAR cvar;
-double destinationThresh = 0.75;
-double approachingThresh = 1.75;
+double destinationThresh = 0.75;//how close you need to be to object to think you have hit it?
+double approachingThresh = 1.75;//how close you are to object threshold?
 double leaveTargetThresh = 1.75;
-double maxTurn = 1.0;
+double maxTurn = 1.0;// multiplier for turn
 int approachingTarget;
 int inLastTarget;
 
 /*gps.h Definitions*/
-GPSVAR gpsvar;
-GPSPNT targetsGPS[4];
+GPSVAR gpsvar;//lat long, heading, speed
+GPSPNT targetsGPS[4];// i thought the starting lat and long was based on where the program was started?
+//do you calculate the GPS locations from this?
 double startLatitude = ADVANCED1LAT;//Center Island Latitude
 double startLongitude = ADVANCED1LON;//Center Island Longitude
 
 /*objects.h Definitions*/
-int SEPARATION_THRESH=750;
-int NONSEPARATION_THRESH=350;
-int HIGH_THRESH=100;
-int LOW_THRESH=3;
-int MAX_OBJECTS=50;
+int SEPARATION_THRESH=750;//?
+int NONSEPARATION_THRESH=350;//?
+int HIGH_THRESH=100;//?
+int LOW_THRESH=3;//?
+int MAX_OBJECTS=50;//?
 
 
 
-/*landmarks.h, visualizer.h*/
+/*landmarks.h, visualizer.h*/ // not needed right?
 double robotX = 0.0, robotY = 0.0, robotTheta = 0.0;
 double targetX, targetY;
 double landmark_tolerance = 500.0;
@@ -156,22 +157,22 @@ double fieldWidth = 60.0, fieldLength = 60.0;
 
 /*main Definitions*/
 void debugTarget();//Debug Target function
-double robotWidth = 0.7112;
+double robotWidth = 0.7112;// is this of geilli?
 int maxSpeed = 50;
 int currentTargetIndex = 0, nextTargetIndex = 0, maxTargets = 0, allTargetsReached = 0;
 int autoOn = 0, maxTargetIndex = 0;
-int mode = 0;
-XY targetListXY[100];
+int mode = 0;// what are the various modes?
+XY targetListXY[100];//what are these intialized too?
 XY currentXY, targetXY, previousXY, nextXY;
-XY swapXY;
+XY swapXY;//for what reason
 /*FLAG STUFF*/
-#define FLAG_DIST_THRESH 12.5
-#define FLAG_X_ADJUST 4
+#define FLAG_DIST_THRESH 12.5//?
+#define FLAG_X_ADJUST 4//?
 XY flagXY;
 int flagPointSet=0;
 double flagPointDistance = 0.0;
 
-/*MODE2 TIMER*/
+/*MODE2 TIMER*/  //?
 #define MODE2DELAY 45.0
 double startAutoTime=0.0, currentAutoTime=0.0, totalAutoTime=0.0;
 int mode1TimeUp=0;
@@ -179,7 +180,7 @@ int mode1TimeUp=0;
 double startTime=0.0, currentTime=0.0, totalTime = 0.0;
 int lastButtons, targetIndexMem = 0;
 
-void swap(){
+void swap(){// please explain
     if(currentTargetIndex>OPEN_FIELD_INDEX&&nextTargetIndex<maxTargetIndex-END_LANE_INDEX){
         targetXY=targetListXY[nextTargetIndex];
         swapXY=targetListXY[currentTargetIndex];
@@ -265,39 +266,39 @@ int main(){
 
     maxTargetIndex=maxTargets-1;
 
-    for(i=0;i<maxTargets;i++){
+    for(i=0;i<maxTargets;i++){// this is converting all GPS point data to XY data.
         targetListXY[i].x = GPSX(targetsGPS[i].lon, startLongitude);
         targetListXY[i].y = GPSY(targetsGPS[i].lat, startLatitude);
     }
-    currentXY.x = GPSX(gpsvar.longitude,startLongitude);
-    currentXY.y = GPSY(gpsvar.latitude,startLatitude);
+    currentXY.x = GPSX(gpsvar.longitude,startLongitude);// converts current robot X location compared to start longitude
+    currentXY.y = GPSY(gpsvar.latitude,startLatitude);// converts current robot Y location compared to start latitude
 
-    targetXY = targetListXY[currentTargetIndex];
-    nextTargetIndex = (currentTargetIndex + 1)%maxTargets;
-    nextXY = targetListXY[nextTargetIndex];
-    previousXY.x = GPSX(startLongitude, startLongitude);
-    previousXY.y = GPSY(startLatitude, startLatitude);
+    targetXY = targetListXY[currentTargetIndex];//sets first target GPS point
+    nextTargetIndex = (currentTargetIndex + 1)%maxTargets;//sets next target GPS point
+    nextXY = targetListXY[nextTargetIndex];// ??
+    previousXY.x = GPSX(startLongitude, startLongitude);// why?
+    previousXY.y = GPSY(startLatitude, startLatitude);//Why?
 
     initRoboteq();  /* Initialize roboteq */
-    initGuide();
-#ifdef USE_VISION
+    initGuide();//what is guide?
+#ifdef USE_VISION // if USE_vision is defined, then initialize vision.
     initVision();
 #endif //USE_VISION
-#ifdef USE_GPS
+#ifdef USE_GPS// if USE_GPS is defined, then initialize GPS.
     initGPS();
     initParser();
 #endif //USE_GPS
-#ifdef USE_LIDAR
+#ifdef USE_LIDAR// if USE_LIDAR is defined, then initialize LIDAR.
     initObjects();
     initSICK();
 #endif //USE_LIDAR
-#ifdef DEBUG_VISUALIZER
+#ifdef DEBUG_VISUALIZER// if defined, then use visualizer.
     initVisualizer();
 #endif //DEBUG_VISUALIZER
-#ifdef USE_MAP
+#ifdef USE_MAP//////>>>>>>>>>>>????
     initMap(0,0,0);
 #endif //USE_MAP
-#ifdef DUMP_GPS
+#ifdef DUMP_GPS// dump GPS data into file
     FILE *fp;
     fp = fopen("gpsdump.txt", "w");
 #endif // DUMP_GPS
@@ -306,30 +307,30 @@ int main(){
         double speed = 0.0, turn = 0.0;
         static double turnBoost = 0.750;//Multiplier for turn. Adjust to smooth jerky motions. Usually < 1.0
         static int lSpeed = 0, rSpeed = 0;//Wheel Speed Variables
-        if (joystick() != 0) {
-            if (joy0.buttons & LB_BTN) {
+        if (joystick() != 0) {// is joystick is connected
+            if (joy0.buttons & LB_BTN) {// deadman switch, but what does joy0.buttons do?????????????????????????????????
                 speed = -joy0.axis[1]; //Up is negative on joystick negate so positive when going forward
                 turn = joy0.axis[0];
 
-                lSpeed = (int)((speed + turnBoost*turn)*maxSpeed);
-                rSpeed = (int)((speed - turnBoost*turn)*maxSpeed);
-                }else{
+                lSpeed = (int)((speed + turnBoost*turn)*maxSpeed);//send left motor speed
+                rSpeed = (int)((speed - turnBoost*turn)*maxSpeed);//send right motor speed
+                }else{ //stop the robot
                      rSpeed=lSpeed=0;
             }
-            if(((joy0.buttons & B_BTN)||autoOn)&& (saveImage==0)){
-                saveImage =DEBOUNCE_FOR_SAVE_IMAGE;
+            if(((joy0.buttons & B_BTN)||autoOn)&& (saveImage==0)){//what is the single & ???????????????????
+                saveImage =DEBOUNCE_FOR_SAVE_IMAGE;//save each image the camera takes, save image is an int declared in vision_nav.h
             }else{
-                if (saveImage) saveImage--;
+                if (saveImage) saveImage--; // turn off if button wasn't pressed?
             }
-            if(joy0.buttons & RB_BTN){
+            if(joy0.buttons & RB_BTN){//turn on autonmous mode if start??? button is pressed
                 autoOn = 1;
                 mode=1;
             }
-            if(joy0.buttons & Y_BTN){
+            if(joy0.buttons & Y_BTN){ // turn off autonomous mode
                 autoOn = 0;
                 mode =0;
             }
-            lastButtons = joy0.buttons;
+            lastButtons = joy0.buttons;//is this just updating buttons?
         } else{
 //            printf("No Joystick Found!\n");
             rSpeed=lSpeed=0;
@@ -339,7 +340,7 @@ int main(){
 //        printf("4: %f %f\n",BASIC4LAT,BASIC4LON);
 //        printf("5: %f %f\n",BASIC5LAT,BASIC5LON);
 //        getchar();
-#ifdef AUTO_SWAP
+#ifdef AUTO_SWAP//what is this
         if((currentTargetIndex>1&&targetIndexMem!=currentTargetIndex)||!autoOn||!mode==3){
             startTime=currentTime=(float)(clock()/CLOCKS_PER_SEC);
             targetIndexMem = currentTargetIndex;
@@ -364,7 +365,7 @@ int main(){
         robotTheta = 0.0;
 #endif //USE_GPS
 
-        if(autoOn&&!flagPointSet){
+        if(autoOn&&!flagPointSet){//this whole thing?????
             flagXY.x=currentXY.x+FLAG_X_ADJUST;
             flagXY.y=currentXY.y;
             flagPointSet=1;
@@ -374,29 +375,32 @@ int main(){
             currentAutoTime=(float)(clock()/CLOCKS_PER_SEC);
             totalAutoTime = currentAutoTime-startAutoTime;
             if(totalAutoTime>=MODE2DELAY){
-                mode1TimeUp=1;
+                mode1TimeUp=1;//what is mode1 time up?
             }
             printf("TIMEING\n");
         }
 
 //        if(currentTargetIndex <= OPEN_FIELD_INDEX || currentTargetIndex >= maxTargetIndex){
-        if(currentTargetIndex <= OPEN_FIELD_INDEX){
+        if(currentTargetIndex <= OPEN_FIELD_INDEX){//if you are on your last target, then set approaching thresh, and dest thresh to larger values?
+                //OPEN_FIELD_INDEX is set to 0 above...?
             approachingThresh=4.0;
             destinationThresh=3.0;
-        }else{
+        }else{//otherwise set your thresholds to a bit closer.
 //            destinationThresh=1.0;
             destinationThresh=0.75;
             approachingThresh=2.5;
         }
+//mode1 = lane tracking and obstacle avoidance. mode 2 = vision, lane tracking, but guide to gps. its not primary focus.
+//mode3= gps mode in open field, but vision is toned down to not get distracted by random grass.
+//mode 4= flag tracking
 
-
-       if(guide(currentXY, targetXY, previousXY, nextXY, robotTheta, robotWidth, 1)&& !allTargetsReached){//Reached Target
+       if(guide(currentXY, targetXY, previousXY, nextXY, robotTheta, robotWidth, 1)&& !allTargetsReached){//If target reached and and not all targets reached
             printf("REACHED TARGET\n");
-            initGuide();
-            previousXY = targetXY;
-            if(currentTargetIndex == maxTargetIndex){
+            initGuide();// reset PID control stuff. problably resets all control variables.
+            previousXY = targetXY;//update last target
+            if(currentTargetIndex == maxTargetIndex){ //seeing if you are done with all targets.
                  allTargetsReached = 1;
-            }else{
+            }else{//otherwise update all the target information
                 currentTargetIndex = (currentTargetIndex + 1);
                 nextTargetIndex = (currentTargetIndex + 1)% maxTargets;
                 targetXY = targetListXY[currentTargetIndex];
@@ -404,8 +408,9 @@ int main(){
             }
         }
         if((autoOn&&(currentTargetIndex == 0&&!approachingTarget&&!mode1TimeUp))||allTargetsReached){
-            mode =1;
-            distanceMultiplier = 50;
+                //if autonomous, and on first target, and not not approaching target, and not mode 1 time up, or reached last target.
+            mode =1;//wtf is mode
+            distanceMultiplier = 50;//wthis is how heavily to rely on vision
         } else if((autoOn&&currentTargetIndex == 0&&mode1TimeUp)||(autoOn&&approachingTarget&&(currentTargetIndex<=OPEN_FIELD_INDEX||currentTargetIndex>=maxTargetIndex-END_LANE_INDEX))){
             mode =2;
             distanceMultiplier = 50;
@@ -413,9 +418,9 @@ int main(){
             mode =3;
             distanceMultiplier = 12;
         }
-        flagPointDistance = D((currentXY.x-flagXY.x),(currentXY.y-flagXY.y));
+        flagPointDistance = D((currentXY.x-flagXY.x),(currentXY.y-flagXY.y));// basically the distance formula, but to what? what flags GPS point?
         if(allTargetsReached&&flagPointDistance<FLAG_DIST_THRESH){
-            mode =4;
+            mode =4;// what is mode
         }
 #ifdef FLAG_TESTING
         /*FLAG TESTING*/
@@ -423,7 +428,7 @@ int main(){
 #endif //FLAG_TESTING
 
         /*Current Target Heading PID Control Adjustment*/
-        cvar.lookAhead = 0.00;
+        cvar.lookAhead = 0.00;//?
         cvar.kP = 0.20; cvar.kI = 0.000; cvar.kD = 0.15;
 
         turn = cvar.turn;
@@ -459,7 +464,7 @@ int main(){
 //        findObjects();
 #endif //USE_LIDAR
 
-#ifdef USE_COMBINED_BUFFER
+#ifdef USE_COMBINED_BUFFER//??????????
 #define WORSTTHRESH 10
 #define BESTTHRESH 3
         if(mode==4){

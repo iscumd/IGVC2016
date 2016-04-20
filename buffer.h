@@ -9,18 +9,18 @@ typedef struct{
 } Point;
 
 typedef struct{
-    double left;
-    double right;
+    double left;// left turn angle
+    double right;//right turn angle
 } Angle_Cab;
 
 
-double bufferTargDist;
+double bufferTargDist;// the halo distance, note if you are closer to GPS location then ignore the obstacle.
 Angle_Cab buffer_angles;
 void getBufferAngles(double target_angle);
 void debugBufferAngles();
 
 extern double combinedTargDist;
 Angle_Cab combinedBufferAngles;
-void getCombinedBufferAngles(double target_angle, int useVision);
-void debugCombinedBufferAngles();
+void getCombinedBufferAngles(double target_angle, int useVision);// find best angle
+void debugCombinedBufferAngles();//debug
 #endif

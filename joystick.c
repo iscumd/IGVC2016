@@ -64,7 +64,7 @@ int joystick()
             joy0.axis[5] = INT2DBL(joyInfoEx.dwVpos);
 
 
-            joy0.buttons = joyInfoEx.dwButtons;
+            joy0.buttons = joyInfoEx.dwButtons;// is a single number, but tells all of which buttons are pressed.
 
 
             joy0.hat = -1;

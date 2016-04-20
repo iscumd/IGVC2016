@@ -1,5 +1,5 @@
 #ifndef LANDMARKS_H
-#define LANDMARKS_H
+#define LANDMARKS_H//pretty much this whole thing, is it some sort of attempt to map?
 struct Landmark {
     double x;
     double y;

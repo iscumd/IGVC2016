@@ -24,14 +24,14 @@ double combinedTargDist;
 //double combinedBufferWidth = 500;
 double combinedBufferWidth = 425;
 //double combinedBufferWidth = 350;
-double combinedBufferLength = 2000.0;
+double combinedBufferLength = 2000.0;//this is distance for how far the robot is looking away from it in millimeters
 //double combinedBufferLength = 2500.0;
 double combinedHalfRobotWidth = 350.0;
 //double combinedHalfRobotWidth = 500.0;
 int combinedNumPoints = 0;
 int badCount = 0;
 #define BADCOUNTTHRESH 1
-bool combinedVectorScan(Point source,Point destination){
+bool combinedVectorScan(Point source,Point destination){//returning true if something is infront of it
     double target_angle = ADJUST_RADIANS(atan2(destination.x - source.x,destination.y - source.y));
     double target_dist = D(destination.x - source.x,destination.y - source.y);
     double dist=0.0;
@@ -60,7 +60,7 @@ bool combinedVectorScan(Point source,Point destination){
     return true;
 }
 
-bool combinedCheckAngle(double target_angle/*, double distance*/){
+bool combinedCheckAngle(double target_angle/*, double distance*/){//verifying both wheels can make the turn
     Point leftWheel, rightWheel;
     Point target;
 
@@ -142,7 +142,7 @@ void combinedUpdatePoints(int useVision){
             }
         }
         tempdata = LMSdata[i];
-        if(tempdata < (short) combinedBufferLength){
+        if(tempdata < (short) combinedBufferLength){// if within halo, then convert location to xy
             double ty = (double) POLAR2Y(i, tempdata);
             if(ty>0){
                 combinedBufPoints[combinedNumPoints].x = (double) POLAR2X(i, tempdata);

@@ -8,11 +8,11 @@
 #define K_EW (K_NS)*cos(DEG2RAD(lat0))
 
 #ifndef GPSX
-#define GPSX(a, b) (K_EW) * ((a) - (b))
+#define GPSX(a, b) (K_EW) * ((a) - (b))// returns a and b distance in X plane
 #endif
 
 #ifndef GPSY
-#define GPSY(a, b)  (K_NS) * ((a)  - (b))
+#define GPSY(a, b)  (K_NS) * ((a)  - (b))// returns a and b distance in Y plane
 #endif
 
 typedef struct {
@@ -26,7 +26,7 @@ typedef struct {
 extern GPSVAR gpsvar;
 extern GPSVAR predicted, filtered;
 
-typedef struct {
+typedef struct {//not necassary, similar to GPSVAR
     double lat;
     double lon;
 } GPSPNT;
