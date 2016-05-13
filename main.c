@@ -19,6 +19,7 @@
 #include "location.h"// using encoders?
 #include "visualizer.h"//
 #include "vision_nav.h"
+#include "dmsConverter.h"//convert lat/long from DMS to decimal
 
 //#define FLAG_TESTING
 //#define USE_NORTH// define this if using go north direction, otherwise comment out.
